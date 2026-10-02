@@ -9,7 +9,7 @@ type gemTypeCardProps = {
 
 export default function gemTypeCard({gemType} : gemTypeCardProps){
     return(
-        <a href="/shop" className="group rounded-2xl border border-border bg-background p-6 tansistion hover:border-primary hover:shadow-md">
+        <a href="/shop" className="group rounded-2xl border border-border bg-background p-6 transition hover:border-primary hover:shadow-md">
             <div className="flex aspect-square items-center justify-center rounded-xl bg-secondary">
                 <span className="text-sm uppercase tracking-widest text-muted-foreground">Gem Image</span>
             </div>
