@@ -1,16 +1,9 @@
-type Gem = {
-  id: number;
-  name: string;
-  type: string;
-  carat: number;
-  price: number;
-  shape: string;
-};
+import type { Gem } from "@/src/types/gem";
+
 
 type GemCardProps = {
-  gem: Gem;
-};
-
+  gem : Gem;
+}
 export default function GemCard({ gem }: GemCardProps) {
   return (
     <article className="overflow-hidden rounded-2xl border border-border bg-background">
