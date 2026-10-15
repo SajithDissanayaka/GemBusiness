@@ -1,4 +1,5 @@
 import type { Gem } from "@/src/types/gem";
+import Link from "next/link";
 
 
 type GemCardProps = {
@@ -34,12 +35,12 @@ export default function GemCard({ gem }: GemCardProps) {
             LKR {gem.price.toLocaleString()}
           </p>
 
-          <a
-            href="/shop"
+          <Link
+            href={`/shop/${gem.id}`}
             className="text-sm font-semibold text-primary hover:opacity-80"
           >
             View Gem
-          </a>
+          </Link>
         </div>
       </div>
     </article>

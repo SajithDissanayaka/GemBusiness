@@ -1,0 +1,42 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum GemAvailability {
+  AVAILABLE
+  RESERVED
+  SOLD
+}
+
+model Gem {
+  id Int @id @default(autoincrement())
+  name String
+  type String
+  carat Float
+  price Int
+  shape String
+
+  description String
+  color String
+  clarity String
+  origin String
+  treatment String
+
+  availability GemAvailability @default(AVAILABLE)
+
+  certificateNumber String? @unique
+
+  createAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+}

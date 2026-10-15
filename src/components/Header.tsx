@@ -1,64 +1,69 @@
+import Link from "next/link";
+
+import CartIndicator from "@/src/components/CartIndicator";
+
 export default function Header() {
   return (
     <header className="border-b border-border bg-background">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
+        {/* Logo / Business Name */}
         <div>
-          <span className="text-xl font-semibold tracking-wide text-foreground">
+          <Link
+            href="/"
+            className="text-xl font-semibold tracking-wide text-foreground"
+          >
             GEM Business
-          </span>
+          </Link>
         </div>
 
+        {/* Main Navigation */}
         <nav className="hidden items-center gap-8 md:flex">
-          <a
+          <Link
             href="/"
-            className="text-sm font-medium text-foreground hover:text-primary"
+            className="text-sm font-medium text-foreground transition hover:text-primary"
           >
             Home
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="/shop"
-            className="text-sm font-medium text-foreground hover:text-primary"
+            className="text-sm font-medium text-foreground transition hover:text-primary"
           >
             Shop
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="/cut-and-polish"
-            className="text-sm font-medium text-foreground hover:text-primary"
+            className="text-sm font-medium text-foreground transition hover:text-primary"
           >
             Cut & Polish
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="/about"
-            className="text-sm font-medium text-foreground hover:text-primary"
+            className="text-sm font-medium text-foreground transition hover:text-primary"
           >
             About
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="/contact"
-            className="text-sm font-medium text-foreground hover:text-primary"
+            className="text-sm font-medium text-foreground transition hover:text-primary"
           >
             Contact
-          </a>
+          </Link>
         </nav>
 
+        {/* Header Actions */}
         <div className="flex items-center gap-4">
           <button
             type="button"
-            className="text-sm font-medium text-foreground hover:text-primary"
+            className="text-sm font-medium text-foreground transition hover:text-primary"
           >
             Search
           </button>
 
-          <button
-            type="button"
-            className="text-sm font-medium text-foreground hover:text-primary"
-          >
-            Cart
-          </button>
+          <CartIndicator />
         </div>
       </div>
     </header>

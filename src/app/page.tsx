@@ -1,28 +1,27 @@
-import CutPolishSection from "../components/CutPolishSection"
-import FeaturedGems from "../components/FeaturedGems"
-import Footer from "../components/Footer"
-import Header from "../components/Header"
-import Hero from "../components/Hero"
-import InquirySection from "../components/InquirySection"
-import ShopByGemType from "../components/ShopByGemType"
-import StoreSection from "../components/StoreSection"
-import WhyChooseUs from "../components/WhyChooseUs"
+import CutPolishSection from "@/src/components/CutPolishSection";
+import FeaturedGems from "@/src/components/FeaturedGems";
+import Hero from "@/src/components/Hero";
+import InquirySection from "@/src/components/InquirySection";
+import ShopByGemType from "@/src/components/ShopByGemType";
+import StoreSection from "@/src/components/StoreSection";
+import WhyChooseUs from "@/src/components/WhyChooseUs";
 
-export default function Home(){
+export default function Home() {
   return (
     <main>
-      <Header/>
-        <Hero/>
-        <FeaturedGems/>
-        <ShopByGemType />
-        <WhyChooseUs/>
-        <CutPolishSection/>
-         <InquirySection />
-         <StoreSection/>
-         <Footer/>
-      <section>
-        
-      </section>
+      <Hero />
+
+      <FeaturedGems />
+
+      <ShopByGemType />
+
+      <WhyChooseUs />
+
+      <CutPolishSection />
+
+      <InquirySection />
+
+      <StoreSection />
     </main>
-  )
+  );
 }
