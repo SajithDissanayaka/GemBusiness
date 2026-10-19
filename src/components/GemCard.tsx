@@ -1,18 +1,28 @@
 import type { Gem } from "@/src/types/gem";
 import Link from "next/link";
-
+import Image from "next/image";
 
 type GemCardProps = {
-  gem : Gem;
-}
+  gem: Gem;
+};
+
 export default function GemCard({ gem }: GemCardProps) {
   return (
     <article className="overflow-hidden rounded-2xl border border-border bg-background">
       {/* Gemstone Image */}
-      <div className="flex aspect-square items-center justify-center bg-secondary">
-        <span className="text-sm uppercase tracking-widest text-muted-foreground">
-          Gemstone Image
-        </span>
+      <div className="relative aspect-square overflow-hidden bg-secondary">
+        {gem.imageUrl ? (
+          <Image
+            src={gem.imageUrl}
+            alt={gem.name}
+            fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" className="object-cover"/>
+        ) : (
+          <div className="flex h-full w-full items-center justify-center">
+            <span className="text-sm uppercase tracking-widest text-muted-foreground">
+              Gemstone Image
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Gem Details */}

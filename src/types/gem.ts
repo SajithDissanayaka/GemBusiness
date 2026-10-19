@@ -19,4 +19,5 @@ export type Gem = {
   availability: GemAvailability;
 
   certificateNumber?: string;
+  imageUrl?: string;
 };

@@ -28,6 +28,17 @@ export default async function ShopPage() {
     orderBy: {
       id: "asc",
     },
+    include : {
+      images : {
+        where : {
+          isPrimary : true,
+        },
+        orderBy : {
+          sortOrder : "asc"
+        },
+        take : 1,
+      }
+    }
   });
 
   const gems: Gem[] = databaseGems.map((gem) => ({
@@ -50,6 +61,8 @@ export default async function ShopPage() {
 
     certificateNumber:
       gem.certificateNumber ?? undefined,
+
+      imageUrl : gem.images[0]?.imageUrl,
   }));
 
   return <ShopClient gems={gems} />;

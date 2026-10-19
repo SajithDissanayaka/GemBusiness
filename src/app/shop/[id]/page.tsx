@@ -1,7 +1,14 @@
 import { notFound } from "next/navigation";
 
-import { gems } from "@/src/data/gems";
+import { prisma } from "@/src/lib/prisma";
 import ProductActions from "@/src/components/ProductActions";
+import GemGallery from "@/src/components/GemGallery";
+
+import type {
+  Gem,
+  GemAvailability,
+} from "@/src/types/gem";
+import { SortOrder } from "@/src/generated/prisma/internal/prismaNamespace";
 
 type GemDetailsPageProps = {
   params: Promise<{
@@ -9,24 +16,120 @@ type GemDetailsPageProps = {
   }>;
 };
 
+// ------------------------------------
+// DATABASE → FRONTEND AVAILABILITY MAP
+// ------------------------------------
+
+function mapAvailability(
+  availability: string
+): GemAvailability {
+  if (availability === "AVAILABLE") {
+    return "Available";
+  }
+
+  if (availability === "RESERVED") {
+    return "Reserved";
+  }
+
+  return "Sold";
+}
+
 export default async function GemDetailsPage({
   params,
 }: GemDetailsPageProps) {
-  // 1. Get the dynamic product ID from the URL
+  // ------------------------------------
+  // 1. GET ID FROM URL
+  // ------------------------------------
+
   const { id } = await params;
 
-  // 2. URL values are strings, so convert the ID to a number
+  // URL params are strings
   const gemId = Number(id);
 
-  // 3. Find the gemstone that matches the URL ID
-  const gem = gems.find((gem) => gem.id === gemId);
+  // Reject invalid IDs such as:
+  // /shop/abc
+  // /shop/-1
+  // /shop/1.5
 
-  // 4. If no gemstone exists with this ID, show the 404 page
-  if (!gem) {
+  if (
+    !Number.isInteger(gemId) ||
+    gemId <= 0
+  ) {
     notFound();
   }
 
-  // 5. WhatsApp inquiry information
+  // ------------------------------------
+  // 2. FIND GEM FROM POSTGRESQL
+  // ------------------------------------
+
+  const databaseGem =
+    await prisma.gem.findUnique({
+      where: {
+        id: gemId,
+      },
+       include : {
+          images : {
+            orderBy : {
+              sortOrder: "asc",
+          },
+        
+      }
+    }
+    });
+
+   
+
+  // ------------------------------------
+  // 3. HANDLE MISSING GEM
+  // ------------------------------------
+
+  if (!databaseGem) {
+    notFound();
+  }
+
+  // ------------------------------------
+  // 4. MAP DATABASE MODEL
+  //    TO FRONTEND GEM MODEL
+  // ------------------------------------
+
+  const gem: Gem = {
+    id: databaseGem.id,
+    name: databaseGem.name,
+    type: databaseGem.type,
+    carat: databaseGem.carat,
+    price: databaseGem.price,
+    shape: databaseGem.shape,
+
+    description: databaseGem.description,
+    color: databaseGem.color,
+    clarity: databaseGem.clarity,
+    origin: databaseGem.origin,
+    treatment: databaseGem.treatment,
+
+    availability: mapAvailability(
+      databaseGem.availability
+    ),
+
+    certificateNumber:
+      databaseGem.certificateNumber ??
+      undefined,
+
+      imageUrl : databaseGem.images[0]?.imageUrl,
+  };
+
+  const galleryImages = databaseGem.images.map(
+  (image) => ({
+    id: image.id,
+    imageUrl: image.imageUrl,
+    altText:
+      image.altText ?? undefined,
+  })
+);
+
+  // ------------------------------------
+  // 5. WHATSAPP INQUIRY
+  // ------------------------------------
+
   const whatsappNumber = "9472764124";
 
   const inquiryMessage = `
@@ -41,28 +144,30 @@ Price: LKR ${gem.price.toLocaleString()}
 Can you provide more details about this gemstone?
 `;
 
-  // 6. Convert the message into a safe URL format
-  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
-    inquiryMessage
-  )}`;
+  // ------------------------------------
+  // 6. CREATE SAFE WHATSAPP URL
+  // ------------------------------------
+
+  const whatsappUrl =
+    `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
+      inquiryMessage
+    )}`;
+
+  // ------------------------------------
+  // 7. UI
+  // ------------------------------------
 
   return (
     <main className="bg-background">
       <section className="py-16">
         <div className="mx-auto max-w-7xl px-6">
           <div className="grid gap-12 lg:grid-cols-2">
-            {/* Gem Media */}
-            <div className="flex min-h-[500px] items-center justify-center rounded-2xl bg-secondary">
-              <div className="text-center">
-                <p className="text-sm uppercase tracking-[0.2em] text-muted-foreground">
-                  Gemstone Image
-                </p>
 
-                <p className="mt-2 text-2xl font-semibold text-foreground">
-                  {gem.name}
-                </p>
-              </div>
-            </div>
+            {/* Gem Media */}
+              <GemGallery
+                gemName={gem.name}
+                images={galleryImages}
+              />
 
             {/* Gem Information */}
             <div>
@@ -85,6 +190,7 @@ Can you provide more details about this gemstone?
               {/* Gem Details */}
               <div className="mt-8 border-y border-border py-6">
                 <dl className="grid gap-5 sm:grid-cols-2">
+
                   {/* Carat */}
                   <div>
                     <dt className="text-sm text-muted-foreground">
@@ -160,9 +266,11 @@ Can you provide more details about this gemstone?
                     <dd className="mt-2">
                       <span
                         className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
-                          gem.availability === "Available"
+                          gem.availability ===
+                          "Available"
                             ? "bg-secondary text-foreground"
-                            : gem.availability === "Reserved"
+                            : gem.availability ===
+                              "Reserved"
                             ? "bg-muted text-foreground"
                             : "bg-muted text-muted-foreground"
                         }`}
@@ -183,7 +291,7 @@ Can you provide more details about this gemstone?
                     </dd>
                   </div>
 
-                  {/* Certificate - only show if available */}
+                  {/* Certificate */}
                   {gem.certificateNumber && (
                     <div>
                       <dt className="text-sm text-muted-foreground">
@@ -195,6 +303,7 @@ Can you provide more details about this gemstone?
                       </dd>
                     </div>
                   )}
+
                 </dl>
               </div>
 
@@ -204,6 +313,7 @@ Can you provide more details about this gemstone?
                 whatsappUrl={whatsappUrl}
               />
             </div>
+
           </div>
         </div>
       </section>
